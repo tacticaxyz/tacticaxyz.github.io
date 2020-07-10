@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>TacTicAddon for JIRA by Anton Yarkov</title>
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/jcarousel.basic.css">
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jquery.jcarousel.min.js"></script>
+
+        <script type="text/javascript" src="js/jcarousel.basic.js"></script>
+
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-46255084-1', 'gdriv.es');
+		  ga('send', 'pageview');
+
+		</script>
+    </head>
+    <body>
+
+        <h1>TacTicA addon for JIRA</h1>
+		<h2>Assign tickets with confidence about the progress</h2>	
+		
+        <div class="wrapper">
+		
+			<p>This JIRA addon allows teams distributed over the world to be more efficient by making work timelines of every JIRA issue more transparent to all colleagues.
+ It uses current and historical information available in JIRA to predict when the assigned person most likely can start work on the subject.</p>	
+		
+            <p style="text-align:center"><img src="img/tactica3.PNG" alt="" width="600" /></p>
+            
+            <p style="text-align:center"><img src="img/tactica8.PNG" width="600" alt="" /></p>
+	
+            <h3>What problem do we solve</h3>
+
+            <p>Teams distributed over the world need appropriate tools for their work. Many companies use JIRA for task tracking.
+Team leads or product managers work with their teams from any locations in the world.
+Asynchronous communication available via tools like JIRA is essential to make these teams efficient.</p>
+
+            <p>However, when a team lead assigns a ticket to his colleague, he has a lack of feedback or response and not sure if it was set into the tasks queue or hanged without being noticed.
+I know that many people solve this by pinging each other in messengers or face-to-face communication to fulfill this gap. And developers know how destructive such distractions are.</p>
+
+            <p>One way to improve this situation is to give the team leads an appropriate tool to predict how assignments will work (or if it's not - why it's not working as expected).</p>
+
+            <p>I developed TacTic Assingments JIRA add-on as part of <a href="https://codegeist.devpost.com/">Atlassian Codegeist 2020 hackathon</a> to allow teams that are distributed over the world to 
+be more efficient by making work timelines of every JIRA issue more transparent to all colleagues.</p>
+
+            <p>It doesn’t replace direct communication, but it avoids wrong patterns of communications and fits distributed teams where it might be hard to communicate directly because of timezones. 
+It might also fit for organizations that don’t have a lot of project managers to track people’s load. 
+Most organizations that I know are eager to constant progress, want their teams to work like a Clock’s (tick tack tick tack) and to avoid overload, stress, and tons of meetings. 
+This TacTic Assignments add-on brings that into life.</p>
+
+            <div class="jcarousel-wrapper">
+                <div class="jcarousel">
+                    <ul>
+                        <li><src href="img/addon1.png"><img src="img/tactica1.PNG" width="600" height="400" alt=""></src></li>
+                        <li><src href="img/addon1.png"><img src="img/tactica2.PNG" width="600" height="400" alt=""></src></li>
+                        <li><src href="img/addon1.png"><img src="img/tactica4.PNG" width="600" height="400" alt=""></src></li>
+                        <li><src href="img/addon1.png"><img src="img/tactica5.PNG" width="600" height="400" alt=""></src></li>
+                        <li><src href="img/addon1.png"><img src="img/tactica6.PNG" width="600" height="400" alt=""></src></li>
+                        <li><src href="img/addon1.png"><img src="img/tactica7.PNG" width="600" height="400" alt=""></src></li>
+                    </ul>
+                </div>
+
+                <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
+                <a href="#" class="jcarousel-control-next">&rsaquo;</a>
+                
+                <p class="jcarousel-pagination">
+                    
+                </p>
+			</div>	
+            
+			<h3>Prioritize work based on knowledge instead of guesses.</h3>
+
+			<p>Basically, TacTic Assingments add-on estimates the risks of every ticket assignment that you make. But it's more appropriate to be used for the tasks that you expect to be executed urgently or really soon.
+It uses current information available in JIRA (work in progress already assigned, timezones, etc.) to predict when the assigned person most likely can start work on the subject.</p>
+
+            <p>It all starts with knowing the ticket number and assignee. Then this tool will automatically compare the assignee and your timezones and show the difference.</p>
+            <p>It will also check the amount of work in progress for this person to consider his current load.</p>
+            <p>It will ensure that the item you have just assigned to a colleague has the best potential to be executed soon. Otherwise, it will raise a red status to let you know about the risks!</p>
+            
+			<h2>How to use</h2>
+            <div>
+                <ul>            
+                    <li>1. Go to your Atlassian JIRA Project > select Apps > select Upload App </li>
+                    <li>2. Type in URL <a href="https://tacticaddon.herokuapp.com/">https://tacticaddon.herokuapp.com</a> and click "Upload"</li>
+                    <li>3. After installation completed you will notice 2 things:
+                        <li>While looking to any JIRA Issue (ticket) find a clickable field (called "glance" in JIRA vocabulary) "Risk estimate of assignment:" with Globus icon and associated "level of risk".</li>
+                        <li><i>"TacTicA map"</i> menu item under global Apps menu</li></ul>
+                    </li>
+                </ul>
+            </div>   
+
+            <p>Try some straightforward use cases:</p>
+            <p>Case 1:</p>
+            <ul> 
+                <li>Open any JIRA issue</li>
+                <li>Click on "See why?" under "Risk estimate of assignment:"</li>
+                <li>See a little page with details about the associated risks: your and your teammate timezones, timezone differences and amount of issues in progress.</li>
+                </ul> 
+            <p>Case 2:</p>
+            <ul> 
+                <li>Open <i>"TacTicA map"</i> from the global Apps menu</li>
+                <li>See the list of cities/timezones together with appropriate points on the map.</li>
+                <li>This will allow you to visualize the presence of your team in the world.</li>
+            </ul> 
+            
+			<h2>More Details</h2>
+            
+			<h3>Technologies used</h3>            
+            
+            <p>Front-End part (actual JIRA add-on) is built with native JavaScript and using Atlassian Connect add-on library <a href="https://bitbucket.org/atlassian/atlassian-connect-express/src/master/README.md#markdown-header-atlassian-connect-express-nodejs-package-for-express-based-atlassian-add-ons" target="_parent">atlassian-connect-express</a>.</p>
+            <p>Back-end API is built with .NET Core 3.1, C#, Docker and AWS platform (ECS, Fargate, EC2, Route53 etc.).</p>
+            <p>External API's used:</p>
+            <ul>
+                <li><a href="http://api.geonames.org/">GeoNames API</a> for geocoding and timezones</a></li>
+                <li><a href="https://ipinfodb.com">IpInfoDb</a> service for finding IP address of the client</a></li>
+            </ul>
+            
+			<h3>Author</h3>
+            
+            <p><a href="https://optiklab.github.io/">Anton Yarkov aka optiklab</a>.</p>
+            
+			<h3>Credits to</h3>
+            
+            <p><a href="https://codegeist.devpost.com/">Atlassian Codegeist 2020 hackathon</a> for motivating  me to work on this.</p>
+            
+            <p><a href="https://community.developer.atlassian.com/">Atlassian Developers community</a> for the information and docs.</p>
+            
+            <p><a href="https://pages.jetbrains.com/dotnet-days-2020/">Jet Brains .NET Days Online 2020</a> for sharing knowledge about Rider IDE.</p>
+            
+            <p><a href="https://acloud.guru/">A Cloud Gurus</a> for online courses about AWS platform.</p>
+            
+        </div>
+    </body>
+</html>
