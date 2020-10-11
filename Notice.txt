@@ -1,0 +1,2 @@
+Copyright 2020 Anton Yarkov
+Licensed under the Apache License, Version 2.0
