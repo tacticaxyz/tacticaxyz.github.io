@@ -8,12 +8,12 @@ However, it cannot be hosted as is on any custom domain due to CORS policies lim
 
 I've done a separate implementation to support deployment for custom domains and using server API.
 
-# Integrations
+## Integrations
 
-[MapBox API](https://mapbox.com)
-[Geonames.org API](http://api.geonames.org)
-[IP Info DB API](https://api.ipinfodb.com)
+- [MapBox API](https://mapbox.com)
+- [Geonames.org API](http://api.geonames.org)
+- [IP Info DB API](https://api.ipinfodb.com)
 
-# Made by 
+## Made by 
 
 [optiklab](https://optiklab.github.io)
