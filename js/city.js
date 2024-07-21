@@ -16,9 +16,12 @@ var cityFoundByIP = false;
 // Global constants.
 var MAX_CITIES = 6;
 
-const useNoServer = true;
+const useNoServer = false;
 
-var baseApiUrl = "https://tactica.xyz"; // "http://f2eadc198999.ngrok.io"; // "https://localhost:4431"
+
+var baseApiUrl = "http://52.200.229.189";
+//var baseApiUrl = "https://localhost:4431"; // Local dev
+//var baseApiUrl = "https://tactica.xyz"; // "http://f2eadc198999.ngrok.io"; // "https://localhost:4431"
 
 var getCityInfo = useNoServer ?
 	/* Example:
@@ -158,7 +161,7 @@ function Initialize() {
 
     loadInitialCities();
     assignCityControls();
-    
+
     //var shareDescription = 'It looks like today you are at ' + $('.activeLocation > .selectedContent').text();
 }
 
@@ -170,9 +173,8 @@ function onMapClick(e) {
 }
 
 function addSuggestedCity() {
-    
     if (suggestedCity && cityFoundByIP) {
-        
+        //console.log("addSuggestedCity: " + suggestedCity.city);
         addCityToList(suggestedCity);
     }
 }
@@ -205,7 +207,7 @@ function addCityToList(city) {
                 city.lat = json.lat;
                 city.long = json.long;
                 city.country = json.country;
-				
+
 				$.ajax({
 				  dataType: "json",
 				  url: timeZonesApi + 'lng=' + city.long + '&lat=' + city.lat,
@@ -222,10 +224,10 @@ function addCityToList(city) {
 					city.timezoneId = json.timezoneId;
 					city.dstOffset = json.dstOffset;
 					city.time = json.time;
-					console.log("Timezone received: " + json.timezoneId);
+					//console.log("Timezone received: " + json.timezoneId);
 				  }
 				});
-                console.log("TacTicA: Successfully retrieved full city info: " + city.woeid + ", " + city.city + ", " + city.country);
+                //console.log("TacTicA: Successfully retrieved full city info: " + city.woeid + ", " + city.city + ", " + city.country);
                 
                 // Check if no duplicates.
                 for (var i = 0; i < citiesList.length; i++) {
@@ -260,6 +262,7 @@ function addCityToList(city) {
 
 function addCityToListNoChecks(city) {
 
+    //console.log("addCityToListNoChecks city: " + city.city);
     isWorking = true;
 
     try {
@@ -323,76 +326,125 @@ function findCityByIPAddress() {
             function (data) {
             if (data && data.ip) {
                 $('.suggested-city').text("You IP: " + data.ip);
-                
-                var searchIp = useNoServer ? 
-                  data.ip : 
-                  data.ip.replace('.','_').replace('.','_').replace('.','_');
-                var urlToRequest = useNoServer ? 
-                  getCityByIp + searchIp + '&format=json' : 
-                  getCityByIp + searchIp;
-                
-                $.ajax({
-                    method: 'get',
-                    url: urlToRequest,
-                    contentType: "application/javascript; charset=utf-8",
-                    dataType: "jsonp",
-                    success: function (location) {
-						  
-                        if (location && location.countryName && location.cityName) {
-                            
-                            $('.suggested-city').text("..." + location.cityName + ', ' + location.countryName + '...');
-                            
-                            $.ajax({
-                                method: 'get',
-                                url: getCityInfo + location.cityName,
-                                contentType: "application/json; charset=utf-8",
-                                success: function (json) {
-                                    
-                                    if (!json || 
-                                        (useNoServer && !json.geonames) ||
-                                        (!useNoServer && !json.woeid)) {
-                                    
-                                        LogError(DATA_NOT_AVAILABLE);
-                                        
+
+                if (useNoServer) {
+                    var searchIp = data.ip;
+                    var urlToRequest = getCityByIp + searchIp + '&format=json';
+                    $.ajax({
+                        method: 'get',
+                        url: urlToRequest,
+                        contentType: "application/javascript; charset=utf-8",
+                        dataType: "jsonp",
+                        success: function (location) {
+
+                            if (location && location.countryName && location.cityName) {
+
+                                $('.suggested-city').text("..." + location.cityName + ', ' + location.countryName + '...');
+
+                                $.ajax({
+                                    method: 'get',
+                                    url: getCityInfo + location.cityName,
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function (json) {
+                                        if (!json || !json.geonames) {
+                                            LogError(DATA_NOT_AVAILABLE);
+                                            initializeIfEmpty();
+                                            return;
+                                        }
+
+                                        suggestedCity.woeid = json.geonames[0].geonameId;
+                                        suggestedCity.city = json.geonames[0].name; // We requested city
+                                        suggestedCity.country = json.geonames[0].countryId;
+
+                                        if (!initializeIfEmpty(suggestedCity)) {
+                                            $('.suggested-city').text("add " + suggestedCity.city + ', ' + suggestedCity.country + '?');
+                                        }
+                                        cityFoundByIP = true;
+                                    },
+                                    error: function (error) {
+                                        $('.suggested-city').text("");
                                         initializeIfEmpty();
-                                        return;
                                     }
-
-                                    if (useNoServer) { 
-                                      suggestedCity.woeid = json.geonames[0].geonameId;
-                                      suggestedCity.city = json.geonames[0].name; // We requested city
-                                      suggestedCity.country = json.geonames[0].countryId;
-
-                                    } else {
-                                      suggestedCity.woeid = json.woeid;
-                                      suggestedCity.city = json.city;
-                                      suggestedCity.country = json.country;
-                                    }
-                                    
-                                    if (!initializeIfEmpty(suggestedCity)) {
-                                    
-                                        $('.suggested-city').text("add " + suggestedCity.city + ', ' + suggestedCity.country + '?');
-                                    }
-                                    
-                                    cityFoundByIP = true;
-                                },
-                                error: function (error) {
-                                    $('.suggested-city').text("");
-                                    initializeIfEmpty();
-                                }
-                            });
-                        } else {
+                                });
+                            } else {
+                                $('.suggested-city').text("");
+                                console.log("Error! Location by IP was not detected, sorry!");
+                                initializeIfEmpty();
+                            }
+                        },
+                        error: function (error) {
                             $('.suggested-city').text("");
                             console.log("Error! Location by IP was not detected, sorry!");
                             initializeIfEmpty();
                         }
-                    },
-                    error: function (error) {
-                        $('.suggested-city').text("");
-                        console.log("Error! Location by IP was not detected, sorry!");
-                        initializeIfEmpty();
-                    }
-                });
+                    });
+                }
+                else {
+                    var searchIp = data.ip.replace('.','_').replace('.','_').replace('.','_');
+                    var urlToRequest = getCityByIp + searchIp;
+
+                    $.getJSON(urlToRequest)
+                        .done(
+                            function (json) {
+                                const serverResponse = JSON.parse(json);
+                                if (serverResponse.isError) {
+                                    console.log("Error when executing request to server: " + serverResponse.error);
+                                } else {
+                                    var location = serverResponse.city;
+                                    
+                                    if (location && location.country && location.city) {
+                                        $('.suggested-city').text("..." + location.city + ', ' + location.country + '...');
+                                            $.getJSON(getCityInfo + location.city)
+                                                .done(
+                                                    function (getCityInfoJson) {
+                                                        const getCityInfoResponse = JSON.parse(getCityInfoJson);
+                                                        if (getCityInfoResponse.isError) {
+                                                            console.log("Error when executing request to server: " + getCityInfoResponse.error);
+                                                        } else {
+                                                            var cityInfo = getCityInfoResponse.city;
+
+                                                            if (!cityInfo || !cityInfo.woeid) {
+
+                                                                LogError(DATA_NOT_AVAILABLE);
+                                                                initializeIfEmpty();
+                                                                return;
+                                                            }
+
+                                                            suggestedCity.woeid = cityInfo.woeid;
+                                                            suggestedCity.city = cityInfo.city;
+                                                            suggestedCity.country = cityInfo.country;
+                                                            suggestedCity.lat = cityInfo.lat;
+                                                            suggestedCity.long = cityInfo.long;
+                                                            suggestedCity.time = cityInfo.time;
+                                                            suggestedCity.gmtOffset = cityInfo.gmtOffset;
+                                                            suggestedCity.rawOffset = cityInfo.rawOffset;
+                                                            suggestedCity.timezoneId = cityInfo.timezoneId;
+                                                            suggestedCity.dstOffset = cityInfo.dstOffset;
+                                                            if (!initializeIfEmpty(suggestedCity)) {
+                                                                $('.suggested-city').text("add " + suggestedCity.city + ', ' + suggestedCity.country + '?');
+                                                            }
+                                                            cityFoundByIP = true;
+                                                        }
+                                                    })
+                                                .fail(function () {
+                                                    $('.suggested-city').text("");
+                                                    initializeIfEmpty();
+                                                });
+
+                                    } else {
+                                        $('.suggested-city').text("");
+                                        console.log("Error! Location by IP was not detected, sorry!");
+                                        initializeIfEmpty();
+                                    }
+                                }
+                            }
+                        )
+                        .fail(function () {
+                            $('.suggested-city').text("");
+                            console.log("Error! Location by IP was not detected, sorry!");
+                            initializeIfEmpty();
+                        });
+                }
             } else {
                 $('.suggested-city').text("");
                 console.log("Can't detect your IP, sorry!");
@@ -434,7 +486,7 @@ function assignCityControls() {
                             city.woeid = geoObject.geonameId;
                             city.lat = geoObject.lat;
                             city.long = geoObject.lng;
-							
+
 							$.ajax({
 							  dataType: "json",
 							  url: timeZonesApi + 'lng=' + city.long + '&lat=' + city.lat,
@@ -451,7 +503,7 @@ function assignCityControls() {
 								city.timezoneId = json.timezoneId;
 								city.dstOffset = json.dstOffset;
 								city.time = json.time;
-								console.log("Timezone received: " + json.timezoneId);
+								//console.log("Timezone received: " + json.timezoneId);
 							  }
 							});
 
@@ -459,12 +511,19 @@ function assignCityControls() {
                           }
                           response(cities);
                         } else {
-                          for (var index = 0; index < json.cities.length; index++) {
+                          const serverResponse = JSON.parse(json);
+                          if (serverResponse.isError) {
+                              console.log("Error when executing request to server: " + serverResponse.error);
+                          } else {
+                            if (serverResponse.cities) { 
+                              for (var index = 0; index < serverResponse.cities.length; index++) {
 
-                            var geoObject = json.cities[index];
-                            cities.push(geoObject);
+                                var geoObject = serverResponse.cities[index];
+                                cities.push(geoObject);
+                              }
+                              response(cities);
+                            }
                           }
-                          response(cities);
                         }
                 });
             }
@@ -488,28 +547,23 @@ function assignCityControls() {
 
 function initializeIfEmpty(city) {
  
+    //console.log("initializeIfEmpty");
     if (!citiesList || citiesList.length == 0) {
-        
-        if (city) {
-            
-            addCityToList(city);
-            
-        } else {
-        
+        if (!city) {
             city = new Object();
             city.city = "San Francisco"; // Default city
             city.country = "US";
             city.woeid = "5391959";
             city.lat = "37.774929";
             city.long = "-122.419418";
-			city.gmtOffset = -8;
-			city.rawOffset = -8;
-			city.timezoneId = "America/Los_Angeles";
-			city.dstOffset = -7;
-			city.time = "2023-05-21 13:03";
-            addCityToList(city);
+            city.gmtOffset = -8;
+            city.rawOffset = -8;
+            city.timezoneId = "America/Los_Angeles";
+            city.dstOffset = -7;
+            city.time = "2024-05-21 13:03";
         }
-        
+        //console.log("addCityToList city: " + city.city);
+        addCityToList(city);
         return true;
     } 
     
@@ -721,7 +775,7 @@ function createContext()
                     type: 'GET',
                     success:  function (json) {
                         if (!json) {
-                            console.error("TacTicAddon WARNING: City not found in response!");
+                            console.error("TacTicA WARNING: City not found in response!");
                             return;
                         }
                         var cityData = JSON.parse(json);
@@ -732,7 +786,7 @@ function createContext()
                 });
             },
             error:  function(responseText){
-                console.log("TacTicAddon ERROR: ", responseText);
+                console.log("TacTicA ERROR: ", responseText);
             }
         });
     }
@@ -791,7 +845,7 @@ function createContext()
             for (var i = 0; i < tacticaState.length; i++) {
                 if (tacticaContext.myTz === tacticaState[i].city) {
                     found = true;
-                    console.log("TacTicAddon: no need to add city: " + tacticaContext.myTz);
+                    //console.log("TacTicA: no need to add city: " + tacticaContext.myTz);
                     break;
                 }
             }
@@ -807,7 +861,7 @@ function createContext()
             for (var i = 0; i < tacticaState.length; i++) {
                 if (tacticaContext.assigneeTz === tacticaState[i].city) {
                     found = true;
-                    console.log("TacTicAddon: no need to add city: " + tacticaContext.assigneeTz);
+                    //console.log("TacTicA: no need to add city: " + tacticaContext.assigneeTz);
                     break;
                 }
             }
@@ -821,7 +875,7 @@ function createContext()
             
             if (updateStorage == true) {
                 window.localStorage.setItem('tacticaState', JSON.stringify(tacticaState));
-                console.log("TacTicA: updated state in localstorage");
+                //console.log("TacTicA: updated state in localstorage");
             }
         }
     };
