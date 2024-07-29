@@ -19,7 +19,7 @@ var MAX_CITIES = 6;
 const useNoServer = false;
 
 //var baseApiUrl = "https://localhost:4431"; // Local dev
-var baseApiUrl = "https://tactica.xyz"; // "http://f2eadc198999.ngrok.io";
+var baseApiUrl = "https://tactica.xyz/api"; // "http://f2eadc198999.ngrok.io";
 
 var getCityInfo = useNoServer ?
 	/* Example:
