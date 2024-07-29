@@ -18,14 +18,12 @@ var MAX_CITIES = 6;
 
 const useNoServer = false;
 
-
-var baseApiUrl = "http://52.200.229.189";
 //var baseApiUrl = "https://localhost:4431"; // Local dev
-//var baseApiUrl = "https://tactica.xyz"; // "http://f2eadc198999.ngrok.io"; // "https://localhost:4431"
+var baseApiUrl = "https://tactica.xyz"; // "http://f2eadc198999.ngrok.io";
 
 var getCityInfo = useNoServer ?
 	/* Example:
-	http://api.geonames.org/searchJSON?username=optiklab&maxRows=1&q=Madrid
+	http://api.geonames.org/searchJSON?username=optiklab&maxRows=10&q=Madrid
 	{
 		"totalResultsCount": 3843,
 		"geonames": [
